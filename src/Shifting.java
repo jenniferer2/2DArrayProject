@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class Shifting {
     private String[][] array;
     private int numRows;
@@ -17,16 +19,24 @@ public class Shifting {
 
 
     public String changeLetter(String message) {
-        message = message.toLowerCase();
         String res = "";
-        String alpha = "abcdefghijklmnopqrstuvwxyz";
+        String alpha = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         {
             for (int i = 0; i < message.length(); i++) {
                 String keep = message.substring(i, i + 1);
                 if (keep.equals("z")) {
                     String g = "a";
                     res = res + g;
-                } else {
+                }
+                else if (keep.equals("Z")) {
+                    String g = "A";
+                    res = res + g;
+                }
+                else if (alpha.indexOf(keep)==-1) {
+                    res = res + keep;
+                }
+
+                else {
                     int track = alpha.indexOf(keep) + 1;
                     res = res + alpha.substring(track, track + 1);
                 }
@@ -53,54 +63,59 @@ public class Shifting {
 
     }
 
-
-    public void printAll() {
-        for (String[] x : array) {
-            for (String d : x) {
-                System.out.print(d);
-            }
-        }
-    }
-
     public String encryptMessage(String message) {
 
         String result = "";
+
         for (int i = 0; i < message.length(); i = numRows * numCols + i) {
             fillBlock(message.substring(i));
-            result = result + encryptBlock();
+            result = result + encryptOne();
 
-        }
-
+            }
+        result = changeLetter(result);
         return result;
 
-    }
-    // shifting each element two to the left
 
-    public String encryptBlock() {
-            String result = "";
 
-           shiftRight();
+        }
 
-            for (int i = 0; i < numRows; i++) {
-                for (int k = 0; k < numCols; k++) {
-                    result = result + array[i][k];
+    public String encryptOne () {
+        String[][] lin = new String[numRows][numCols];
+        String res = "";
+        for (int r = 0; r < numRows - 1; r++) {
+            for (int c = 0; c < numCols - 1; c++) {
+                lin[r + 1][c + 1] = array[r][c];
+            }
+        }
+
+
+            for (int c = 0; c < numCols - 1; c++) {
+                lin[0][c + 1] = array[numRows - 1][c];
+
+            }
+
+            for (int r = 0; r < numRows - 1; r++) {
+                lin[r + 1][0] = array[r][numCols - 1];
+
+
+            }
+            lin[0][0] = array[numRows - 1][numCols - 1];
+
+            for (int r = 0; r < numRows; r++) {
+                for (int c = 0; c < numCols; c++) {
+                    res = res + lin[r][c];
+
                 }
             }
-            changeLetter(result);
-            return result;
+            array = lin;
 
 
-        }
-        // shift right by 1
-        public void shiftRight() {
 
-        for (int i = 0; i < numRows; i++){
-            String temp = array[i][numCols-1];
-            for (int k = numCols-1; k >= 1; k--) {
-                array[i][k] = array [i][k-1];
-            }
-        }
-        }
+        return res;
+
+    }
+
+
 
 
 
@@ -117,28 +132,68 @@ public class Shifting {
             }
             return newn;
         }
-    public String decrypt2 (String en) {
-        String x [][] = new String [numRows][numCols] ;
-        int i = 0;
-        for (int r = 1; r < numRows; r++) {
-            for (int c = 1; c < numCols ; c++) {
-
-                x[r-1][c-1] = en.substring(i, i + 1);
-                i++;
-
-            }
-        }
+    public String decrypt2 (String s) {
         String res = "";
+        String lin[][] = new String[numRows][numCols];
+        int i = 0;
+        for (int r = 0; r < numRows; r++) {
+            for (int c = 0; c < numCols; c++) {
+                if (i != s.length()) {
+                    lin[r][c] = s.substring(i, i + 1);
+                    i++;
 
-        for (int r = 0; r < x.length;r++) {
-            for (int c = 0; c < x[0].length; c++) {
+                }
+            }
+        }
 
-                res = res + x[r][c];
+        String save = "";
+        for (int c = 1; c < numCols; c++ ) {
+            save = save +lin[0][c];
+        }
+        save = save +lin[0][0];
+        int col = 1;
+        for (int z = 1; z < numRows; z++) {
+            for (int d = 1; d < numCols; d++) {
+                res = res + lin [z][d];
+            }
+            res = res + lin [z][0];
+
+        }
+        res = res + save;
+
+
+        return res;
+    }
+
+
+
+
+    public String returnToLetter(String message) {
+        String res = "";
+        String alpha = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        {
+            for (int i = 0; i < message.length(); i++) {
+                String keep = message.substring(i, i + 1);
+                if (keep.equals("a")) {
+                    String g = "z";
+                    res = res + g;
+                }
+                else if (keep.equals("A")) {
+                    String g = "z";
+                    res = res + g;
+                }
+                else if (alpha.indexOf(keep)==-1) {
+                    res = res + keep;
+                }
+
+                else {
+                    int track = alpha.indexOf(keep) - 1 ;
+                    res = res + alpha.substring(track, track + 1);
+                }
 
 
             }
         }
-
         return res;
 
     }
@@ -149,7 +204,6 @@ public class Shifting {
     public String decryptMessage(String encryptedMessage)
     {
         String result = "";
-        String h = encryptedMessage;
         for (int i = 0; i < encryptedMessage.length(); i =  numRows*numCols + i) {
 
 
@@ -158,6 +212,7 @@ public class Shifting {
 
         }
         result = removed(result);
+        result = returnToLetter(result);
 
 
         return result;
