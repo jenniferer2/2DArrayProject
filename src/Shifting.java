@@ -2,8 +2,8 @@ import java.util.Arrays;
 
 public class Shifting {
     private String[][] array;
-    private int numRows;
-    private int numCols;
+    private final int numRows;
+    private final int numCols;
 
 
     public Shifting(int r, int c) {
@@ -16,6 +16,9 @@ public class Shifting {
     public String[][] getArray() {
         return array;
     }
+    public int getNumRows () {return numRows ;}
+    public int getNumCols () {return numCols ;}
+
 
 
     public String changeLetter(String message) {
